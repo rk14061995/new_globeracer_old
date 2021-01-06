@@ -20,7 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		    $ch = curl_init($host);
 		    $payloadName = array(
 		    	"grant_type"=>"authorization_code",
-		    	"redirect_uri"=>"http://localhost/Globeracers/Suunto",
+		    	"redirect_uri"=>"http://localhost/new_globeracer/Suunto",
 		    	"code"=>$code
 		    );
 			curl_setopt($ch, CURLOPT_HEADER, 0);
