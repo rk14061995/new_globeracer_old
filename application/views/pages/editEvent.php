@@ -27,16 +27,16 @@
          </script>
           <div class="col-md-12">
               
-            <div class="card card-user">
+            <div class="card card-user p-3">
               <div class="card-header">
-                <h5 class="card-title">Create Event</h5>
+                <h5 class="card-title">Update Event: <span class="text-danger"><?=$eventDetail->event_name?></span> (<?=$eventDetail->event_status?>)</h5> 
               </div>
               <div class="card-body">
             
                  <form  action="<?=base_url('Events/updateEvent')?>" method="post" enctype="multipart/form-data">
                   <div class="row">
                       
-                      <input type="text" value="<?=$eventDetail->event_id?>" name="event_id">
+                      <input type="hidden" value="<?=$eventDetail->event_id?>" name="event_id">
                     <div class="col-md-12">
                       <?php
                           if($this->session->flashdata('msg')){
@@ -75,23 +75,62 @@
                         </select>
                       </div>
                     </div>
-                    <div class="col-md-6 p-1">
+                    <div class="col-md-3 p-1">
                       <div class="form-group">
                         <label>Venue</label>
                         <input type="text" class="form-control" name="event_venue" placeholder="Event Venue" value="<?=$eventDetail->event_venue?>">
                       </div>
                     </div>
+                    <div class="col-md-3 p-1">
+                      <div class="form-group">
+                        <label>Change Status</label>
+                        <select class="form-control" name="act_deact" id="activate_event">-->
+                            <option value="0">Select</option>
+                            <option value="1" >Active</option>
+                            <option value="2">In-Active</option>
+                        </select>
+                      </div>
+                    </div>
                     
 
                   </div>
+                  <script>
+                       $(document).on('change','#activate_event', function (){
+                        //   alert(" Activated ");
+                           var changeStatus=$(this).val();
+                          var eventId='<?=$eventDetail->event_id?>';
+                           $.ajax({
+                               url:"<?=base_url('Events/updateEventStatus')?>",
+                               type:"post",
+                               data:{status:changeStatus, event_id:eventId},
+                               success:function(response){
+                                   console.log(response);
+                                   response=JSON.parse(response);
+                                   if(response.code==1){
+                                       swal("Success", "Event Status Updated", "success");
+                                   }else{
+                                       swal("Error", "Something Went Wrong", "error");
+                                   }
+                                   setInterval(function(){
+                                       location.reload();
+                                   },2000);
+                                   
+                               }
+                           });
+                       });
+                   </script>
                   <div class="row">
                     
                     <div class="col-md-12 p-1">
                       <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" class="form-control"  name="event_des" placeholder="The name of the activity.">
-                            <?=$eventDetail->event_des?>                        
-                        </textarea>
+                        <!--<textarea class="form-control" class="form-control"  name="event_des" placeholder="The name of the activity.">-->
+                        <!--    <?=$eventDetail->event_des?>                        -->
+                        <!--</textarea>-->
+                        <textarea name="event_des" id="event_des"><?=$eventDetail->event_des?></textarea>
+                        <script>
+                            CKEDITOR.replace( 'event_des' );
+                        </script>
                         <!-- <input type="text"  placeholder="The name of the activity." value=""> -->
                       </div>
                     </div>
@@ -112,35 +151,31 @@
                         <input type="date" class="form-control" name="end_date_local" value="<?=$eventDetail->event_end_date?>" >
                       </div>
                     </div>
-                    <div class="col-md-3 pr-1">
+                    <div class="col-md-6 pr-1">
                         <div class="form-group">
+                            
+                            
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label>Event Fee</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <select class="form-control" name="currency">
-                                        <option value="INR">₹</option>
-                                        <option value="USD">$</option>
-                                    </select>
-                                </div>
-                                 <div class="col-md-8">
-                                    
+                                <div class="col-md-6">
+                                    <label>Event Fee (INR)</label>
                                     <input type="number" class="form-control" placeholder=" 0" value="<?=$eventDetail->event_fee?>" name="fee">
                                 </div>
+                                <div class="col-md-6">
+                                    <label>Event Fee (USD)</label>
+                                    <input type="number" class="form-control" placeholder=" 0" value="<?=$eventDetail->event_fee_usd?>" name="fee_usd">
+                                </div>
                             </div>
-                          
+                                
+                           
                             
                           </div>
                     </div>
-                    <div class="col-md-3 pr-1">
-                      <div class="form-group">
-                        <label>Distance(m)</label>
-                        <input type="number" class="form-control" placeholder="0" value="<?=$eventDetail->event_distance?>" name="event_distance">
-                      </div>
-                    </div>
+                    <!--<div class="col-md-3 pr-1">-->
+                    <!--  <div class="form-group">-->
+                    <!--    <label>Distance(m)</label>-->
+                    <!--    <input type="number" class="form-control" placeholder="0" value="<?=$eventDetail->event_distance?>" name="event_distance">-->
+                    <!--  </div>-->
+                    <!--</div>-->
                    
                   </div>
                   <div class="row">

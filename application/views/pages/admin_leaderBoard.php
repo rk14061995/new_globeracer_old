@@ -556,41 +556,47 @@
        });
                      $(document).on('change','#event_id',function(){
                          var event_id=$(this).val();
+                         console.log("Working.....");
                          if($('#team_id').val()!=undefined){
                              var team_id=$('#team_id').val();
                              if(team_id!=0){
-                                 getBoth(event_id,team_id);
+                                console.log('Inside If');
+                                getBoth(event_id,team_id);
                              }else{
-                                 $.ajax({
-                                    url:"<?=base_url('User/getLeadData')?>",
-                                    type:'post',
-                                    data:{event_id:event_id},
-                                    success:function(response){
-                                        // console.log(response);
-                                        response=JSON.parse(response);
-                                        $('#ed').empty();
-                                        if(response.data.length>0){
+                                console.log('Inside Else');
+                                //  $.ajax({
+                                //     url:"<?=base_url('User/getLeadData')?>",
+                                //     type:'post',
+                                //     data:{event_id:event_id},
+                                //     success:function(response){
+                                //         // console.log(response);
+                                //         response=JSON.parse(response);
+                                //         $('#ed').empty();
+                                //         if(response.data.length>0){
                                             
-                                            for(let i=0; i<response.data.length; i++){
-                                                var tr='';
-                                                tr+='<tr>';
-                                                tr+='<td><a href="'+response.data[i].id_table+'">'+response.data[i].firstname+''+response.data[i].middle_name+' '+response.data[i].lastname+'</a></td>';
-                                                tr+='<td>'+response.data[i].team_id+'</td>';
-                                                tr+='<td>'+response.data[i].team_id+'</td>';
-                                                tr+='<td>'+response.data[i].team_id+'</td>';
-                                                tr+='<td>'+response.data[i].team_id+'</td>';
-                                                tr+='<td>'+response.data[i].team_id+'</td>';
-                                                tr+='</tr>';
-                                                $('#ed').append(tr);
+                                //             for(let i=0; i<response.data.length; i++){
+                                //                 var tr='';
+                                //                 tr+='<tr>';
+                                //                 tr+='<td><a href="'+response.data[i].id_table+'">'+response.data[i].firstname+''+response.data[i].middle_name+' '+response.data[i].lastname+'</a></td>';
+                                //                 tr+='<td>'+response.data[i].team_id+'</td>';
+                                //                 tr+='<td>'+response.data[i].team_id+'</td>';
+                                //                 tr+='<td>'+response.data[i].team_id+'</td>';
+                                //                 tr+='<td>'+response.data[i].team_id+'</td>';
+                                //                 tr+='<td>'+response.data[i].team_id+'</td>';
+                                //                 tr+='</tr>';
+                                //                 $('#ed').append(tr);
                                                 
-                                            }
-                                        }
-                                    }
-                                });
-                             }
-                             
+                                //             }
+                                //         }
+                                //     }
+                                // });
+                             } 
+                         }else{
+                            console.log(" Event Id: ");
+                            window.location.href="<?=base_url('Report/dailyReports/')?>"+event_id;
+                            // getResult(event_id);
                          }
-                        //  console.log(" Event Id: "+event_id+" Team Id: "+team_id);
+                        //  
                      });
                      $(document).on('change','#team_id',function(){
                         var team_id=$(this).val();

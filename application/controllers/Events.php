@@ -97,10 +97,10 @@
 		public function onGoing(){
 			$data['userSessionData']=unserialize($this->session->userdata('adminData'));
 			$condition=array(
-								
-								"userevents.event_start_date="=>date('Y-m-d')
+								"userevents.event_start_date<="=>date('Y-m-d'),
+								"userevents.event_end_date>="=>date('Y-m-d')
 							);
-			$data['events']=$this->db->select('userevents.*,user_details.firstname, user_details.lastname ')->join('user_details','user_details.id_table=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
+			$data['events']=$this->db->select('userevents.*')->join('user_details','user_details.id_table=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
 			// $data['events']=$this->db->select('userevents.*,users_.user_fullname ')->join('users_','users_.user_id=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
 			$this->load->view('layout/header',$data);
 			$this->load->view('pages/onGoing');
@@ -155,7 +155,17 @@
 
 		    return $destination;
 		}
-
+		public function updateEventStatus(){
+		  //  print_r($_POST);
+		    if($this->input->post('status')!=0){
+		        $st=$this->db->where('event_id',$this->input->post('event_id'))->update('userevents',array('event_status'=>$this->input->post('status')));
+    		    if($st){
+    		        die(json_encode(array("code"=>1)));
+    		    }else{
+    		        die(json_encode(array("code"=>0)));
+    		    }
+		    }
+		}	
 		
 		public function createEvent(){
 			// print_r($_POST);
