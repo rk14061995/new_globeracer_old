@@ -24,43 +24,29 @@
             
           <?php if(count($events)>0){ ?>
           <?php foreach($events as $evt):?>
-           <!-- <?php print_r($evt) ?>  -->
+           <?php 
+            // print_r($evt['event']->reg_id) ;
+            
+            ?> 
             <div class="col-md-3">
               <div class="card">
                 <div class="card-header font-weight-bold">
-                   <a href="<?=base_url('User/myEventActivities/').$evt->event_id?>"><?='Event: '.ucwords($evt->event_name)?></a>
+                   <a href="<?=base_url('User/myEventActivities/').$evt['event']->event_id?>"><?='Event: '.ucwords($evt['event']->event_name)?></a>
                   <hr>
                 </div>
                 <div class="card-body">
-                 <!--  <img src="<?=base_url('assets/img/eventsImage/')?>" width="100%" style="max-height: 200px">
-                  <hr> -->
+               
                   <p>
                      <?php 
-                       // print_r($distanceSum);
-                    //   echo $distanceSum[0]->totalDistance
-                       
-                       if($distanceSum==0){
-                           echo '0';
+                      if($evt['distanceSum']==0){
+                           echo '<label>Distance:</label>(0) Km ';
                        }else{
-                           echo '<label>Distance:</label>('. $distanceSum[0]->totalDistance/1000 . ') Km ';
+                           echo '<label>Distance:</label>('. $evt['distanceSum']/1000 . ') Km ';
                        }
                      ?>
                     
                   </p>
-                  
-                  <!--<p>-->
-                  <!--  <i class="fa fa-calendar" aria-hidden="true"></i> <span class="text-success"><?=$evt->event_start_date?></span> <!--  to  <span class="text-danger"><?='$evt->event_end_date'?></span> -->
-                  <!--</p>-->
-                  <!--<p>-->
-                  <!--  <i class="fa fa-bicycle" aria-hidden="true"></i> <span class="text-danger"><?=$evt->event_category?>  </span>-->
-                  <!--</p>-->
-                  <!-- <p>
-                    <i class="fa fa-globe" aria-hidden="true"></i> <span class="text-success"><?=$evt->event_venue?>  </span>
-                  </p> -->
-                  
-                  
-                </div>
-                
+               </div>
               </div>
             </div>
           <?php endforeach; ?>

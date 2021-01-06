@@ -481,19 +481,74 @@
 	        curl_close($curl);
 		}
 		public function myUpComing(){
-		   
+		  
 		    $data['userSessionData']=unserialize($this->session->userdata('userData'));
 		    $user_id=$data['userSessionData'][0]->id_table;
+		    $atlete_id=$data['userSessionData'][0]->user_id;
 		    $condition=array(
 		                      //  "userevents.event_start_date >"=>date('Y-m-d'),
 		                        "race_registeration.user_id"=>$user_id,
-		                        "race_registeration.amoun_status"=>"Paid"
-		                  );
-		    $data['events']=$this->db->join('userevents','userevents.event_id=race_registeration.event_id')->where($condition)->get('race_registeration')->result();
-		    $this->load->view('layout/headerUser',$data);
+		                        "race_registeration.amoun_status"=>"Paid",
+		                        "race_registeration.to_show"=>1
+						  );
+				
+		 $datas = $this->db->join('userevents','userevents.event_id=race_registeration.event_id')->where($condition)->get('race_registeration')->result();
+				  
+			// print_r($datas);
+			$result =array();
+				foreach($datas as $rest){
+					$start_date = $rest->event_start_date;
+					$end_date = $rest->event_end_date;
+					
+					$con = array(
+						'start_date >='=>$start_date,
+						'start_date <='=>$end_date,
+						'athlete_id'=>$atlete_id,
+						// 'user_email'=>
+					);	
+					$arr = $this->db->where($con)->get('event_details')->result();
+					$distance_total =0;
+					for($i=0 ; $i < count($arr); $i++){
+						$distance_total = $distance_total +$arr[$i]->distance;
+					}
+					
+					array_push($result,array('event'=>$rest,'distanceSum'=>$distance_total));
+				}	
+			
+			
+			$data['events']=$result;
+			$this->load->view('layout/headerUser',$data);
 			$this->load->view('pages/myComingEvent');
 			$this->load->view('layout/footerUser');
 		}
+
+		public function myEventActivities($id){
+			$data['userSessionData']=unserialize($this->session->userdata('userData'));
+		    $user_id=$data['userSessionData'][0]->id_table;
+			$atlete_id=$data['userSessionData'][0]->user_id;
+			$condition=array(
+						"event_id"=>$id,
+				 	);
+			
+			$data['event'] = $this->db->where($condition)->get('userevents')->result();
+					$start_date = $data['event'][0]->event_start_date;
+					$end_date = $data['event'][0]->event_end_date;
+				
+					$con = array(
+						'start_date >='=>$start_date,
+						'start_date <='=>$end_date,
+						'athlete_id'=>$atlete_id,
+						// 'user_email'=>
+					);	
+			$data['activities'] = $this->db->where($con)->get('event_details')->result();
+					
+			
+		    $this->load->view('layout/headerUser',$data);
+			$this->load->view('pages/myEventActivities');
+			$this->load->view('layout/footerUser');  
+		}
+
+
 		public function userProfile($user_id){
 		    echo $user_id;
 		}
@@ -555,7 +610,8 @@
 							);
 			// $data['events']=$this->db->where($condition)->get('userevents')->result();
 			$data['events']=$this->db->select('userevents.*,user_details.firstname, user_details.lastname ')->join('user_details','user_details.id_table=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
-			// print_r($data['events']);
+			//  print_r($data['events']);
+			//  die();
 			$this->load->view('layout/headerUser',$data);
 			$this->load->view('pages/allEvents');
 			$this->load->view('layout/footerUser');
@@ -565,7 +621,8 @@
 			// $dt = new DateTime("@$epoch");  // convert UNIX timestamp to PHP DateTime
 			// die;
 			$data['userSessionData']=unserialize($this->session->userdata('userData'));
-			
+			echo $athlete_id =$data['userSessionData'][0]->user_id;
+			//die();
 			$id_table=$data['userSessionData'][0]->id_table;
 			$email=$data['userSessionData'][0]->user_email;
 			if($userData=$this->db->where('id_table',$id_table)->get('user_details')->row()){
@@ -583,16 +640,10 @@
 				// echo 'sdf';
 				$this->session->set_flashdata('msg','No User Found');
 			}
-			// die;
-			// $data['Ngo']=$this->db->where('user_type','Ngo')->get('users_')->result();
-			// $condition=array(
-			// 					"event_details.athlete_id"=>$user_id,
-			// 					// "userevents.event_start_date>="=>date('Y-m-d')
-			// 				);
-			// $data['events']=$this->db->join()->where($condition)->order_by('start_date','desc')->get('event_details')->result();
+			
 			$condition=array(
-                                "user_email"=>$email,
-                                "start_date >="=>'2020-11-14',
+                               // "user_email"=>$email,
+                                "athlete_id"=>$athlete_id,
                                 );
 			$data['events']=$this->db->where($condition)->order_by('id','desc')->get('event_details')->result();
 			// $data['events']=$this->db->select('userevents.*,users_.user_fullname ')->join('users_','users_.user_id=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
@@ -1336,35 +1387,43 @@
 			$this->load->view('layout/footerUser');
     	}
     	public function sendMail(){
-    	    print_r($_POST);
-    	    die();
-    	    $this->load->library('email');
-            $config['protocol'] = "smtp";
-            $config['smtp_host'] = "ssl://smtp.googlemail.com";
-            $config['smtp_port'] = "465";
-            $config['smtp_user'] = "greenusys@gmail.com";
-            $config['smtp_pass'] = "grade@835";
-            $message = "Dear $username
-                        Your Registration is Successfull for the Event 
-                        The Event Details Are Given Below:-
-                        Event Name:-$event_name
-                        Event Category:-$event_category
-                        Event Venue:-$event_venue
-                        Event Distance:-$event_distance
-                        Event Discription:-$event_desc
-                        Start Date:-$event_sdate
-                        End Date:-$event_edate
-                        Amout Paid:-$event_fee
-                        Transaction Id:-$txnid";
-            $config['mailtype'] = "html";
-            $ci = & get_instance();
-            $ci->load->library('email', $config);
-            $ci->email->set_newline("\r\n");
-            $ci->email->from("greenusys@gmail.com");
-            $ci->email->to($useremail);
-            $ci->email->subject("Event Registration Mail");
-            $ci->email->message($message);
-             $ci->email->send();
+    	    // print_r($_POST);
+			// die();
+			$fromEmail = $this->input->post('from');
+			$toEmail = $this->input->post('to');
+			$subject = $this->input->post('subject_email');
+			$message = $this->input->post('mail_ad');
+			
+			// ini_set( 'smtp_port', 25 );
+			// ini_set( 'smtp_port', 25 );
+			$config = Array(
+				'protocol' => 'smtp',
+				'smtp_host' => 'ssl://smtp.gmail.com',
+				'smtp_port' =>465,
+				'smtp_user' => 'greenusys@gmail.com', // change it to yours
+				'smtp_pass' => 'grade@835', // change it to yours
+				'mailtype' => 'html',
+				'charset' => 'iso-8859-1',
+				'wordwrap' => TRUE
+			  );
+			  ini_set( 'smtp_port', 25 );
+
+			  $message = $message;
+			  $this->load->library('email', $config);
+			$this->email->set_newline("\r\n");
+			$this->email->from($fromEmail);
+            $this->email->to($toEmail);
+            $this->email->subject($subject);
+            $this->email->message($message);
+			if($this->email->send())
+		   {
+			echo 'Email sent.';
+		   }
+		   else
+		  {
+		   show_error($this->email->print_debugger());
+		  }
+          
     	}
 	}
 	

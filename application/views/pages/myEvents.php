@@ -20,7 +20,7 @@
                 ?>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-5">
           <?php if(count($events)>0){ ?>
           <?php foreach($events as $evt):?>
            <!-- <?php print_r($evt) ?>  -->
