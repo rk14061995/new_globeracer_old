@@ -1,0 +1,22 @@
+[30-Oct-2020 09:45:44 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 581
+[30-Oct-2020 09:46:34 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 581
+[30-Oct-2020 09:46:37 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 581
+[30-Oct-2020 09:46:42 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 581
+[30-Oct-2020 09:49:50 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 581
+[30-Oct-2020 09:50:23 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 586
+[02-Nov-2020 07:43:40 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:44:01 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:44:42 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:45:20 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:45:47 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:45:49 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:15 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:25 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:41 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:53 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:55 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:48:56 UTC] PHP Fatal error:  Class 'My_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[02-Nov-2020 07:51:22 UTC] PHP Fatal error:  Class 'MY_Controller' not found in /home4/globecwv/public_html/greenusys/application/controllers/User.php on line 5
+[06-Nov-2020 15:34:34 UTC] PHP Fatal error:  Cannot re-assign auto-global variable _POST in /home4/globecwv/public_html/Globeracers/application/controllers/API.php on line 119
+[11-Nov-2020 07:04:26 UTC] PHP Fatal error:  Cannot redeclare API::getNewAccessToken() in /home4/globecwv/public_html/Globeracers/application/controllers/API.php on line 793
+[11-Nov-2020 07:05:04 UTC] PHP Fatal error:  Cannot redeclare API::getNewAccessToken() in /home4/globecwv/public_html/Globeracers/application/controllers/API.php on line 771

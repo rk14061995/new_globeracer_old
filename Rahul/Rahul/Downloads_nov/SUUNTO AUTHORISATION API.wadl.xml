@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<application xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://wadl.dev.java.net/2009/02 http://www.w3.org/Submission/wadl/wadl.xsd" xmlns="http://wadl.dev.java.net/2009/02">
+  <doc title="SUUNTO AUTHORISATION API">OAuth 2 authentication for Suunto integration API. This API is used to authenticate user against the Suunto systems. In order to transfer any data to/from Suunto systems, user need to provide access rights via the authorization process.</doc>
+  <resources base="https://cloudapi.suunto.com/">
+    <resource path="/oauth/authorize">
+      <doc title="Authorize">OAuth 2 authorize endpoint. Provides authorization code for token endpoint.</doc>
+      <method name="GET">
+        <request>
+          <param name="response_type" style="query" type="xs:string" required="true">
+            <doc>auth response type</doc>
+            <option value="code" />
+          </param>
+          <param name="client_id" style="query" type="xs:string" required="true">
+            <doc>application login/id</doc>
+          </param>
+          <param name="redirect_uri" style="query" type="xs:string" required="true">
+            <doc>redirect URL</doc>
+          </param>
+        </request>
+        <response status="302">
+          <doc>redirect with auth code</doc>
+        </response>
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/uaa/login">
+      <doc title="Login">Login endpoint. Endpoint participates in OAuth workflow. No direct call required.</doc>
+      <method name="POST">
+        <request />
+        <response status="200" />
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/uaa/login">
+      <doc title="Login screen">Login endpoint. Endpoint participates in OAuth workflow. Redirect to this endpoint generates from Authorize endpoint. No direct call required.</doc>
+      <method name="GET">
+        <request />
+        <response status="200" />
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/oauth/token">
+      <doc title="Token">Token endpoint. Provides JWT token (access and refresh). 
+Refresh access token:  /oauth/token?grant_type=refresh_token&amp;refresh_token=&lt;refresh_token&gt;. New access and refresh tokens:  /oauth/token?grant_type=authorization_code&amp;code=&lt;authorization code from /authorize endpoint&gt;.
+Token endpoint is protected using Basic authentication scheme. The Authorization header has to be added as specified in RFC7617. Authorization header format - Authorization: Basic Base64(username:password).</doc>
+      <method name="POST">
+        <request>
+          <param name="code" style="query" type="xs:string">
+            <doc>Authorization code obtained from Authorize endpoint</doc>
+          </param>
+          <param name="refresh_token" style="query" type="xs:string">
+            <doc>Refresh token obtained from token endpoint</doc>
+          </param>
+          <param name="redirect_uri" style="query" type="xs:string">
+            <doc>same redirect URI as used for /authorize endpoint request</doc>
+          </param>
+          <param name="grant_type" style="query" type="xs:string" required="true">
+            <doc>Grant type. Possible values: authorization_code or refresh_token</doc>
+            <option value="authorization_code" />
+            <option value="refresh_token" />
+          </param>
+          <param name="Authorization" style="header" type="xs:string" required="true">
+            <doc>Authorization header.</doc>
+          </param>
+        </request>
+        <response status="200">
+          <doc>JWT token (access and refresh) encoded as base64 strings. Token expiration time (seconds since Unix epoch) is in the "exp" token attribute.</doc>
+        </response>
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/oauth/confirm_access">
+      <doc title="Confirm access">Confirm access endpoint. Endpoint participates in OAuth workflow. No direct call required.</doc>
+      <method name="POST">
+        <request />
+        <response status="200" />
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/oauth/authorize">
+      <doc title="Process authorize">This endpoint process data required for authorizing partner app. Endpoint participates in OAuth workflow. No direct call required.</doc>
+      <method name="POST">
+        <request />
+        <response status="302">
+          <doc>Redirect to the registered URL with the authorization code.</doc>
+        </response>
+        <response status="400" />
+      </method>
+    </resource>
+    <resource path="/oauth/deauthorize">
+      <doc title="Deauthorize">Disconnect user from partner service. Access token, formatted as bearer token must be submitted as Authorization header.  Authorization header format: "Authorization: Bearer &lt;access token&gt;"</doc>
+      <method name="GET">
+        <request>
+          <param name="client_id" style="query" type="xs:string" required="true">
+            <doc>application login/id</doc>
+          </param>
+          <param name="Authorization" style="header" type="xs:string" required="true">
+            <doc>Access token, formatted as bearer token </doc>
+          </param>
+        </request>
+        <response status="200">
+          <doc>empty response if success</doc>
+        </response>
+        <response status="400" />
+      </method>
+    </resource>
+  </resources>
+</application>
