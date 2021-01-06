@@ -10,16 +10,12 @@
 		// 	# code...
 		// }
 		public function index(){
-		    $otherdb = $this->load->database('otherdb', TRUE); // the TRUE paramater tells CI that you'd like to return the database object.
-
-            // $data['oldUser']= $otherdb->select('*')->get('wp8m_users')->result();
-            $data['oldUser']=$this->db->select('*')->get('user_details')->result();
-            $data['events']=$this->db->get('userevents')->result();
+		    $data['events']=$this->db->get('userevents')->result();
             // print_r($query);
-		    $data['userSessionData']=unserialize($this->session->userdata('adminData'));
-			$this->load->view('layout/header',$data);
-			$this->load->view('pages/sendMailToAll');
-			$this->load->view('layout/footer');
+            $data['userSessionData']=unserialize($this->session->userdata('adminData'));
+            $this->load->view('layout/header',$data);
+            $this->load->view('pages/sendMailToAll');
+            $this->load->view('layout/footer');
 		}
         public function sendMail(){
             // die(json_encode($_POST));

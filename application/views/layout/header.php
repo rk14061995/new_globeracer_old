@@ -119,7 +119,7 @@
               <!--  </a>-->
               <!--</li>-->
               <li class="active ">
-                <a href="<?=base_url('Participant/LeaderBoard')?>">
+                <a href="<?=base_url('Participant/selectEvent')?>">
                   <i class="nc-icon nc-tile-56 "></i>
                   <p>Leaerboard</p>
                 </a>

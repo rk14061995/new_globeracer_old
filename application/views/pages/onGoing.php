@@ -2,14 +2,25 @@
       <div class="content">
         <script type="text/javascript">
           $(document).ready(function() {
-              $('#example').DataTable( {
+              $('#raceEx').DataTable( {
                   dom: 'Bfrtip',
                   buttons: [
-                      'copy', 'csv', 'excel', 'pdf', 'print'
+                      'pdf', 'print'
                   ]
               } );
           } );
-         
+        //   $(document).on('click','.deleteEvent',function(){
+        //       var event_id=$(this).attr('event_id');
+        //       swal("Good job!", "This will be Deleted! : "+event_id, "success");
+        //   })
+          
+           $(document).on('click','.editCat',function(){
+              var cat_id=$(this).attr('cat_id');
+              var cat_name= $(this).attr('cat_name');
+              $('#cat_id').val(cat_id);
+              $('#cat_name').val(cat_name);
+              $('#editCategory').modal('show');
+          });
           $(document).on('click','.deleteEvent', function(){
              
                 var event_id=$(this).attr('event_id');
@@ -31,10 +42,13 @@
                   }
               });
           });
+        //   $(document).on('change','.actInactive',function(){
+        //      var event_id= 
+        //   });
         </script>
         <div class="row">
             <div class="col-md-12">
-                <table class="display" id="example" style="width: 100%">
+                <table class="display" id="raceEx" style="width: 100%">
                     <thead class=" text-primary">
                       <th class="text-center">
                         Event Name
@@ -49,6 +63,7 @@
                         Date
                       </th>
                       <th class="text-center">Status</th>
+                      <!--<th class="text-center">Change Status</th>-->
                       <th class="text-center">
                         Action
                       </th>
@@ -73,17 +88,31 @@
                                     <p class="text-danger"><span><?=date('d, M Y', strtotime($evt->event_end_date))?></span> - <span><?=date('h:i A', strtotime($evt->event_end_date))?></span> </p>
                                       <!--to  <span class="text-danger"><?=date('d, M Y', strtotime($evt->event_end_date))?></span>-->
                                 </td>
-                                <td>
-                                    <select class="form-control" name="act_deact">
-                                        <option value="0">Select</option>
-                                        <option value="1" selected>Active</option>
-                                        <option value="2">In-Active</option>
-                                    </select>
+                                <!--<td>-->
+                                    <!--<span class="evId"></span>-->
+                                <!--    <select class="form-control" name="act_deact" id="activate_event">-->
+                                <!--        <option value="0">Select</option>-->
+                                <!--        <option value="1" selected>Active</option>-->
+                                <!--        <option value="2">In-Active</option>-->
+                                <!--    </select>-->
+                                <!--</td>-->
+                                <td class="text-center">
+                                    
+                                    <?php
+                                        if($evt->event_status=='Active'){
+                                          $cls_="btn btn-success";  
+                                        }else{
+                                            $cls_="btn btn-danger";  
+                                        }
+                                    
+                                    ?>
+                                    <span class="<?=$cls_?>"><?=$evt->event_status?> </span>
+                                  
                                 </td>
                                 <td class="text-center">
-                                    <a href="<?=base_url('Events/viewEventDescription/').$evt->event_id?>" class="btn btn-info"><i class="fa fa-eye"></i></a>
-                                    <a href="<?=base_url('Events/editEvent/').$evt->event_id?>" class="btn btn-info editEvent" event_id="<?=$evt->event_id?>" ><i class="fa fa-pencil"></i></a>
-                                    <a href="javascript:void(0)" event_id="<?=$evt->event_id?>" class="btn btn-danger deleteEvent"><i class="fa fa-trash"></i></a>
+                                    <a href="<?=base_url('Events/viewEventDescription/').$evt->event_id?>" class="px-1"><i class="fa fa-eye"></i></a>
+                                    <a href="<?=base_url('Events/editEvent/').$evt->event_id?>" class="px-1 text-success editEvent" event_id="<?=$evt->event_id?>" ><i class="fa fa-pencil"></i></a>
+                                    <a href="javascript:void(0)" event_id="<?=$evt->event_id?>" class="px-1 text-danger deleteEvent"><i class="fa fa-trash"></i></a>
                                  
                                 </td>
                                 
@@ -93,10 +122,22 @@
                     </tbody>
                   </table>
             </div>
-           
-         
+           <script>
+               $(document).on('change','#activate_event', function (){
+                //   alert(" Activated ");
+                   var changeStatus=$(this).val();
+                //   var eventId=
+                   $.ajax({
+                       url:"<?=base_url('Events/updateEventStatus')?>",
+                       type:"post",
+                       data:{status:changeStatus},
+                       success:function(response){
+                           console.log(rsponse);
+                       }
+                   });
+               });
+           </script>
           
         </div>
-        
       </div>
   
