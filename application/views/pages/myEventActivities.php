@@ -35,10 +35,11 @@
                         <th>Moving Time</th>
                         <th>Elapsed Time</th>
                         <th>Start Date </th>
-                       
+                     
                     </thead>
                     <tbody>
                         <?php
+                        $su=0;
                         //print_r($activities);
                         foreach($activities as $ld){
                         ?>
@@ -49,12 +50,14 @@
                             <td><?=$ld->moving_time?></td>
                             <td><?=$ld->elapsed_time?></td>
                             <td><?=$ld->start_date?></td>
+                          
                         </tr>
                         
                         <?php 
-                            }
+                           }
                         
                         ?>
+
                     </tbody>
                 </table>
             </div>

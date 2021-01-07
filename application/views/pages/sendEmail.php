@@ -22,7 +22,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="font-weight-bold">To:</label>
-                            <input type="email" class="form-control" name="to" placeholder="Participant Email Id." value="info@globeracers.com" readonly>
+                            <input type="email" class="form-control" name="to" placeholder="Participant Email Id." value="shivam0474@gmail.com" readonly>
+                            <!-- <input type="email" class="form-control" name="to" placeholder="Participant Email Id." value="info@globeracers.com" readonly> -->
                         </div>
                     </div>
                     <div class="row">
