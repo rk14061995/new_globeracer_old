@@ -1399,7 +1399,7 @@
 			$config = Array(
 				'protocol' => 'smtp',
 				'smtp_host' => 'ssl://smtp.gmail.com',
-				'smtp_port' =>465,
+				'smtp_port' =>465,	
 				'smtp_user' => 'greenusys@gmail.com', // change it to yours
 				'smtp_pass' => 'grade@835', // change it to yours
 				'mailtype' => 'html',
