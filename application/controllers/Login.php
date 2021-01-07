@@ -396,7 +396,10 @@
 		public function userSignUp(){
 			// Array ( [] => rahul@123 [] => rahul@123 [] => rahul@123 [user-repeatpass] => rahul@123 )
 // 			print_r($_POST);
-
+			// $ip=$_SERVER['REMOTE_ADDR'];
+			$ip='103.97.137.69';
+			$ipdat = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=" . $ip));
+ 			$continent_name= $ipdat->geoplugin_continentName;
 			$data=array(
 			                "firstname"=>$this->input->post('first-name'),
 			                "middle_name"=>$this->input->post('middle-name'),
@@ -405,6 +408,7 @@
 							"user_password"=>base64_encode($this->input->post('user-pass')),
 							"contact_no"=>$this->input->post('contact_no'),
 							"user_type"=>$this->input->post('user_type'),
+							"continent_name"=>$continent_name,
 						);
 			$res=$this->USERM->createUserAccount($data);
 			switch ($res) {
