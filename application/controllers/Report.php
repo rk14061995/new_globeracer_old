@@ -11,17 +11,43 @@
 		// }
 		public function viewLeaderboard(){
 			$event_id=$this->input->get('event_id');
+			$data['event_id']=$event_id;
 			$eventDetails=$this->db->where('event_id',$event_id)->get('userevents')->row();
 			
-        	$start_date=$eventDetails->event_start_date;
-        	$end_date=$eventDetails->event_end_date;
-			$condition=array(
-                		            "race_registeration.event_id"=>$event_id,
-                		            "race_registeration.to_show"=>1,
-                		            "event_details.start_date >="=>$start_date,
-                		            "event_details.start_date <="=>$end_date,
-                		            "race_registeration.amoun_status"=>'Paid'
-		                        );
+            $start_date=$eventDetails->event_start_date;
+            $end_date=$eventDetails->event_end_date;
+			if($this->input->get('_for_')){
+				// echo 'For passed';
+				$for_date=$this->input->get('_for_');
+                if($eventDetails->result_declared==1){
+                    $condition=array(
+                                    "race_registeration.event_id"=>$event_id,
+                                    "race_registeration.to_show"=>1,
+                                    "event_details.start_date >="=>$start_date,
+                                    "event_details.start_date <="=>$end_date,
+                                    "race_registeration.amoun_status"=>'Paid'
+                                );
+                    $data['max_date']=$end_date;
+                }else{
+                    $condition=array(
+                                    "race_registeration.event_id"=>$event_id,
+                                    "race_registeration.to_show"=>1,
+                                    "event_details.start_date ="=>$for_date,
+                                );
+                    $data['max_date']=date('Y-m-d');
+                }
+			}else{
+				// echo 'For Today';
+				$for_date=date('Y-m-d');
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                "event_details.start_date ="=>$for_date,
+                            );
+			}
+			$data['for_']=$for_date;
+        	
+			
 		        
 	        $reacResult=array();
 	        $temp_status=0;
@@ -38,7 +64,7 @@
         		        ->order_by('user_distance','desc')
         		        ->group_by('user_details.user_id')
         		        ->where($condition)
-        		        ->get('race_registeration')->result();
+        		        ->get('race_registerati___on')->result();
         	// echo '<table border="1">';
         	$i=1;
         	

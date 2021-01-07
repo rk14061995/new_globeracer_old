@@ -1,0 +1,6 @@
+1. import event_details table add column user_email.
+
+2. update myUpComing(), MyEvents(), myEventActivities() functions in User Controller.
+
+3. 
+

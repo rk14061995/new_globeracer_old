@@ -51,7 +51,7 @@
                               </td>
                               <td><?=$evt->event_start_date?></td>
                               <td><?=$evt->event_end_date?></td>
-                              <td><a href="<?=base_url('Report/viewLeaderboard/event_id=').$evt->event_id?>" class="text-info">View LeaderBoard</a></td>
+                              <td><a href="<?=base_url('Report/viewLeaderboard?').'event_id='.$evt->event_id?>" class="text-info">View LeaderBoard</a></td>
                             </tr>
                             <?php $i++;?>
                           <?php endforeach;?>

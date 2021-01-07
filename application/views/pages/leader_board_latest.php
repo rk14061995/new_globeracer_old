@@ -1,3 +1,22 @@
+
+<?php
+  if($this->input->get('_for_')){
+    $date_one=$this->input->get('_for_');
+  }else{
+    $date_one=date('Y-m-d');
+  }
+        // if($this->uri->segment('4')){
+                
+       // }else{
+          
+       // }
+       // if($this->uri->segment('3')){
+          $event_id=$this->input->get('event_id');
+       // }else{
+       //    $event_id=0;
+       // }
+            // echo $date_one;
+    ?>
 <style type="text/css">
   .tabb{
 
@@ -60,25 +79,15 @@
   
   });
   
-    <?php
-        if($this->uri->segment('4')){
-                $date_one=$this->uri->segment('4');
-       }else{
-          $date_one=date('Y-m-d');
-       }
-       if($this->uri->segment('3')){
-          $event_id=$this->uri->segment('3');
-       }else{
-          $event_id=0;
-       }
-            // echo $date_one;
-    ?>
+    
   // var date='dd';
       var date='<?=$date_one?>';
       $(document).on('change','#ChDate',function(){
           if($(this).val()==1){
               //Show Single
-              $('#date_div').toggle();
+              $('#date_div').show();
+
+              $('#date_').show();
               if($('#ldrShow').val()==1){
                   //Show Single
                   $('#cumm_single').show();
@@ -88,6 +97,7 @@
                   $('#filter_single').hide();
               }else{
                   //Show Cumm
+
                   $('#cumm_single').hide();
                   $('#team_cuml').hide();
                   $('#cumm_solo').hide();
@@ -99,6 +109,8 @@
                   console.log(" Date: "+date);
               }
           }else{
+
+            window.location.href="<?=base_url('Report/viewLeaderboard').'?event_id='.$event_id?>";
               // Show Cumm
               $('#date_').show();
               $('#date_div').hide();
@@ -181,10 +193,10 @@
        
 </script>
 <script>
-    $('#date_').on('change',function(){
-    // alert(); 
+    $(document).on('change','#date_',function(){
         var dat=$(this).val()
-        window.location.href="<?=base_url('User/logicLeaderBoard/').$event_id.'/'?>"+dat;
+        // alert('Date Selected');
+        window.location.href="<?=base_url('Report/viewLeaderboard').'?event_id='.$event_id.'&_for_='?>"+dat;
     });
     
 </script>
@@ -246,6 +258,34 @@
   });
   
 </script>
+
+<?php
+  if($this->input->get('_for_')){
+   
+    ?>  
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('#ChDate option[value=1]').attr('selected','selected');
+        $('#date_div').show();
+        $('#date_').show();
+      });
+      
+    </script>
+    <?php
+    
+  }else{
+    ?>  
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('#ChDate option[value=2]').attr('selected','selected');
+        $('#date_div').hide();
+        $('#date_').hide();
+      });
+      
+    </script>
+    <?php
+  }
+?>
       <div class="content">
         <div class="row">
           <div class="col-md-12">
@@ -256,13 +296,13 @@
                             <label>Choose Date</label>
                             <select class="form-control" id="ChDate">
                                 <option value="1">Date</option>
-                                <option value="2" selected>Cumulative </option>
+                                <option value="2" >Cumulative </option>
                             </select>
                         </div>
                         <div class="col-md-3" id="date_div">
                             <label>Choose Date</label>
                             <!--<input type="text" class="form-control" name="date_" id="date_" value="<?=date('m-d-Y')?>" readonly>-->
-                            <input type="date" class="form-control" name="date_" id="date_" min="2020-11-14" max="<?=date('Y-m-d')?>">
+                            <input type="date" value="<?=date('Y-m-d',strtotime($date_one))?>" class="form-control" name="date_" id="date_" min="2020-11-14" max="<?=$max_date?>">
                         </div>
                         <div class="col-md-3">
                             <label>Choose Leaderboard</label>
@@ -310,7 +350,7 @@
                     <div class="table-responsive">
                       <table class="display" id="category_wise" style="width: 100%">
                         <thead class=" text-primary">
-                          <th>S.No</th>
+                          <!-- <th>S.No</th> -->
                           <th class="text-left">
                             Rank
                           </th>
@@ -320,15 +360,23 @@
                           <th class="text-left">
                             Name
                           </th>
+                          <?php
+                            if($this->input->get('_for_')){
+                              ?>
+                                <th class="text-left">
+                                  Day
+                                </th>
+                              <?php
+                            }
+                          ?>
                           <th class="text-left">
                             Distance KM
                           </th>
                           <th class="text-left">
                             Gender
                           </th>
-                          <!-- <th class="text-left">
-                            Time (HH:MM:SS)
-                          </th> -->
+                          
+                          
                           <!--<th class="text-left">-->
                           <!--  Overall Rank-->
                           <!--</th>-->
@@ -340,7 +388,7 @@
                         <tbody>
                             <?php foreach($eventResult as $rst): ?>
                               <tr>
-                                <td></td>
+                                <!-- <td></td> -->
                                 <td class="text-left">
                                   <?=$rst['rank']?>
                                 </td>
@@ -350,6 +398,11 @@
                                 <td class="text-left">
                                   <?=$rst['name']?>
                                 </td>
+                                <?php if($this->input->get('_for_')): ?>
+                                  <td class="text-left">
+                                    <?=$for_?>
+                                  </td>
+                                <?php endif;?>
                                 <td class="text-left">
                                   <?=$rst['distance']?>
                                 </td>
@@ -437,14 +490,14 @@
                     buttons: [
                           'csv', 'excel', 'pdf', 'print'
                       ],
-                    "order": [[ 4, 'desc' ]]
+                    "order": [[ 3, 'desc' ]]
                 } );
              
-                t.on( 'order.dt search.dt buttons.dt', function () {
-                    t.column(0, {search:'applied', order:'applied', buttons:'applied'}).nodes().each( function (cell, i) {
-                        cell.innerHTML = i+1;
-                    } );
-                } ).draw();
+                // t.on( 'order.dt search.dt buttons.dt', function () {
+                //     t.column(0, {search:'applied', order:'applied', buttons:'applied'}).nodes().each( function (cell, i) {
+                //         cell.innerHTML = i+1;
+                //     } );
+                // } ).draw();
               
             //   $('#category_wise').DataTable( {
             //       dom: 'Bfrtip',
