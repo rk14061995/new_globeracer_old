@@ -74,6 +74,9 @@
   });
 </script>
 <script>
+  $(document).ready(function(){
+    $('#team').hide();
+  });
   $(document).on('change','#event_id',function(){
     var eventId=$(this).val();
   
@@ -198,12 +201,9 @@
         // alert('Date Selected');
         window.location.href="<?=base_url('Report/viewLeaderboard').'?event_id='.$event_id.'&_for_='?>"+dat;
     });
-    
 </script>
-<script>
-                            
+<script>                          
   $('#filter').on('change',function(){
-  // alert(); 
       var filter_val=$(this).val();
       console.log(" Filter Value : "+filter_val+' Fetch Data For : '+date);
       $('#team_cuml').hide();
@@ -258,21 +258,41 @@
   });
   
 </script>
-
 <?php
+  if($ddd=$this->input->get('type')){
+      if($ddd=='Solo'){
+        ?>
+          <script type="text/javascript">
+            $(document).ready(function(){
+              $('#ldrShowType option[value=1]').attr('selected','selected');
+              $('#single').show();
+              $('#team').hide();
+            });      
+          </script>
+        <?php
+      }else{
+        ?>
+          <script type="text/javascript">
+            $(document).ready(function(){
+              $('#ldrShowType option[value=2]').attr('selected','selected');
+              $('#single').hide();
+              $('#team').show();
+            });      
+          </script>
+        <?php
+      }
+  }  
+
   if($this->input->get('_for_')){
-   
     ?>  
     <script type="text/javascript">
       $(document).ready(function(){
         $('#ChDate option[value=1]').attr('selected','selected');
         $('#date_div').show();
         $('#date_').show();
-      });
-      
+      });      
     </script>
-    <?php
-    
+    <?php  
   }else{
     ?>  
     <script type="text/javascript">
@@ -281,12 +301,16 @@
         $('#date_div').hide();
         $('#date_').hide();
       });
-      
     </script>
     <?php
   }
 ?>
       <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <span class="text-danger"></span>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-12">
             <div class="card">
@@ -302,16 +326,48 @@
                         <div class="col-md-3" id="date_div">
                             <label>Choose Date</label>
                             <!--<input type="text" class="form-control" name="date_" id="date_" value="<?=date('m-d-Y')?>" readonly>-->
-                            <input type="date" value="<?=date('Y-m-d',strtotime($date_one))?>" class="form-control" name="date_" id="date_" min="2020-11-14" max="<?=$max_date?>">
+                            <?php
+                              if($date_one<=$max_date){
+                                $vd=date('Y-m-d',strtotime($date_one));
+                              }else{
+                                $vd=date('Y-m-d',strtotime($max_date));
+                              }
+
+                            ?>
+
+                            <input type="date" value="<?=$vd?>" class="form-control" name="date_" id="date_" min="2020-11-14" min="<?=$min_date?>" max="<?=$max_date?>">
                         </div>
                         <div class="col-md-3">
                             <label>Choose Leaderboard</label>
-                            <select class="form-control" id="ldrShow">
+                            <select class="form-control" id="ldrShowType">
                                 <option value="1" selected>Solo</option>
                                 <option value="2">Team</option>
                                 <option value="3">Continent</option>
                             </select>
                         </div>
+                        <?php
+                           $currentURL = current_url(); //for simple URL
+                           $params = $_SERVER['QUERY_STRING']; //for parameters
+                           $fullURL = $currentURL . '?' . $params; //full URL with parameter
+
+                        ?>
+                        <script type="text/javascript">
+                          $(document).on('change','#ldrShowType',function(){
+                            var Type_=$(this).val();
+                            var gjj='<?=$fullURL?>';
+                              // console.log(gjj);
+                            if(Type_==1){
+                              var t="Solo";
+                              window.location.href="<?=base_url('Report/viewLeaderboard')?>"+"?event_id="+'<?=$event_id?>'+"&type="+t;
+                            
+                            }else{
+                              var t="team";
+                              $('#single').hide();
+                              $('#team').show();
+                              window.location.href="<?=base_url('Report/viewLeaderboard')?>"+"?event_id="+'<?=$event_id?>'+"&type="+t; 
+                            }
+                          });
+                        </script>
                         <div class="col-md-3">
                             <label>Filter</label>
                             <select class="form-control" id="filter">
@@ -328,9 +384,27 @@
                 </div>
             </div>
           </div>
-          
+          <script type="text/javascript">
+            $(document).on('change','#filter',function(){
+              var Type_=$(this).val();
+                $('#single').show();
+                $('#team').hide();
+                window.location.href="<?=$fullURL?>"+"&run_type="+Type_; 
+              // if(Type_==1){
+              //   var t="solo";
+              //   $('#single').show();
+              //   $('#team').hide();
+              
+              // }else{
+              //   var t="team";
+              //   $('#single').hide();
+              //   $('#team').show();
+                
+              // }
+            });
+          </script>
         </div>
-        <div class="row">
+        <div class="row" id="single">
           <div class="col-md-12">
             <div class="card">
                 <?php if(isset($event_name)): ?>
@@ -340,17 +414,11 @@
                   </div> 
                  <?php endif;?>
               <div class="card-body">
-                
                 <div class="tab-content">
-                  <!--<div id="" class="tab-pane  fade">-->
-                    
-                  
                   <div id="cate" class="tab-pane active">
-                    
                     <div class="table-responsive">
                       <table class="display" id="category_wise" style="width: 100%">
                         <thead class=" text-primary">
-                          <!-- <th>S.No</th> -->
                           <th class="text-left">
                             Rank
                           </th>
@@ -375,15 +443,6 @@
                           <th class="text-left">
                             Gender
                           </th>
-                          
-                          
-                          <!--<th class="text-left">-->
-                          <!--  Overall Rank-->
-                          <!--</th>-->
-                          <!--<th class="text-left">-->
-                          <!--  Gender Rank-->
-                          <!--</th>-->
-                          
                         </thead>
                         <tbody>
                             <?php foreach($eventResult as $rst): ?>
@@ -416,33 +475,72 @@
                                   
                                   ?>
                                 </td>
-                                
-                                
-                               
                               </tr>
                               <?php endforeach; ?>
-                          
                         </tbody>
                       </table>
                     </div>
                   </div>
-                  
                 </div>
-                <script type="text/javascript">
-                  $(document).ready(function() {
-                      $('.js-example-basic-single').select2();
-                  });
-                </script>
-
-
-
-
-
-                
               </div>
             </div>
           </div>
-          
+        </div>
+
+        <div class="row " id="team">
+          <div class="col-md-12">
+            <div class="card">
+                <?php if(isset($event_name)): ?>
+                   <div class="card-header">
+                    <h4 class="card-title ">Showing Result For: <span class="text-warning"> <?=$event_name?></span></h4>
+                    <hr>
+                  </div> 
+                 <?php endif;?>
+              <div class="card-body">
+                <div class="tab-content">
+                  <div id="cate" class="tab-pane active">
+                    <div class="table-responsive">
+                      <table class="display" id="team" style="width: 100%" border="1">
+                        <thead class=" text-primary">
+                          <th class="text-center">
+                            S.No
+                          </th>
+                          <th class="text-center">
+                            Rank
+                          </th>
+                          <th class="text-left">
+                            Team Name
+                          </th>
+                          <th class="text-left">
+                            Distance (Km)
+                          </th>
+                         
+                        </thead>
+                        <tbody>
+                          <?php $k=1;?>
+                            <?php foreach($team_data as $tm): ?>
+                              <tr>
+                                <td class="text-center"><?=$k?></td>
+                                <td class="text-center">
+                                  <?=$tm['rank']?>
+                                </td>
+                                <td class="text-left">
+                                  <?=$tm['team_name']?>
+                                </td>
+                                <td class="text-left">
+                                  <?=$tm['team_distance']/1000?>
+                                </td>
+                              </tr>
+                              <?php $k++?>
+                              <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
        <script type="text/javascript"> 
@@ -492,6 +590,8 @@
                       ],
                     "order": [[ 3, 'desc' ]]
                 } );
+
+
              
                 // t.on( 'order.dt search.dt buttons.dt', function () {
                 //     t.column(0, {search:'applied', order:'applied', buttons:'applied'}).nodes().each( function (cell, i) {
@@ -499,13 +599,13 @@
                 //     } );
                 // } ).draw();
               
-            //   $('#category_wise').DataTable( {
-            //       dom: 'Bfrtip',
-            //       buttons: [
-            //           'csv', 'excel', 'pdf', 'print'
-            //       ],
-            //       "order": [[ 2, "desc" ]]
-            //   } );
+              // $('#team').DataTable( {
+              //     dom: 'Bfrtip',
+              //     buttons: [
+              //         'csv', 'excel', 'pdf', 'print'
+              //     ],
+              //     "order": [[ 3, "desc" ]]
+              // } );
             //   $('#eventRanking').DataTable( {
             //       dom: 'Bfrtip',
             //       buttons: [
