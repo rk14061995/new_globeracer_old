@@ -56,6 +56,22 @@
 		    }
 		}
 
+		public function check_token($user_id){
+
+			// print_r($event_id);
+			$this->db->select('*');
+			$this->db->from('token_details');
+			$this->db->where('user_id',$user_id);
+		    $query = $this->db->get();
+		    if ( $query->num_rows() > 0 )
+		    {
+		    	return false;
+		    }
+		    else{
+		    	return true;
+		    }
+		}
+
 		public function update_table($table,$data,$condition){
 		    $this->db->where($condition);
 		    $this->db->update($table,$data);
