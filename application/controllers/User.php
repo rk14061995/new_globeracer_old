@@ -11,6 +11,140 @@
 			
 
 		}
+		public function selectEvent(){
+			$data['userSessionData']=unserialize($this->session->userdata('userData'));
+		    $user_id=$data['userSessionData'][0]->user_id;
+		    $data['events']=$this->db->order_by('event_id','desc')->get('userevents')->result();
+			$this->load->view('layout/headerUser',$data);
+			$this->load->view('pages/selectEventUser');
+			$this->load->view('layout/footer');
+		}
+		public function viewLeaderboard(){
+			$event_id=$this->input->get('event_id');
+			$data['event_id']=$event_id;
+			$eventDetails=$this->db->where('event_id',$event_id)->get('userevents')->row();
+			$start_date=$eventDetails->event_start_date;
+            $end_date=$eventDetails->event_end_date;	
+			if($this->input->get('_for_')){
+				// echo 'For passed';
+				$for_date=$this->input->get('_for_');
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                "event_details.start_date ="=>$for_date,
+                            );
+			}else{
+                $for_date=$end_date;
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                "event_details.start_date >="=>$start_date,
+                                "event_details.start_date <="=>$end_date,
+                                "race_registeration.amoun_status"=>'Paid'
+                            );
+            }
+            $teamArray=array();
+            if($this->input->get('type') && $this->input->get('type')=='team'){
+                
+                $team_data=array();
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                // "event_details.start_date >="=>$start_date,
+                                // "event_details.start_date <="=>$end_date,
+                                "race_registeration.amoun_status"=>'Paid',
+                                "team_details.team_name!="=>"Solo"
+                            );
+                $all_teams=$this->db
+                                ->select('SUM(event_details.distance) as team_distance, team_details.team_id, team_details.team_name')
+                                ->join('race_registeration', 'team_details.team_id = race_registeration.team_id', 'left')
+                                ->join('user_details','user_details.id_table=race_registeration.user_id')
+                                ->order_by('team_distance','desc')
+                                ->join('event_details','event_details.athlete_id=user_details.user_id')
+                                ->group_by('team_details.team_id')
+                                ->where($condition)
+                                ->get('team_details')->result();
+                                $i=1;
+                foreach($all_teams as $tm){
+                    array_push($teamArray,array("rank"=>$i,"team_id"=>$tm->team_id,"team_distance"=>$tm->team_distance,"team_name"=>$tm->team_name));
+                    $i++;
+                    array_push($team_data,$tm->team_id);
+                }
+                // print_r($teamArray);
+                // echo '  --------------------------------------------------------------- ';
+                // print_r($team_data);
+                $teams=$this->db->where('team_name!=','Solo')->get('team_details')->result();
+                foreach($teams as $t_m_){
+                    if (in_array($t_m_->team_id, $team_data)){
+                      // echo "Match found";
+                    }else{
+                      // echo "Match not found";
+                      array_push($teamArray,array("rank"=>0,"team_id"=>$t_m_->team_id,"team_distance"=>0,"team_name"=>$t_m_->team_name));
+                    }
+                }
+            }
+            $data['team_data']=$teamArray;
+			$data['for_']=$for_date;
+        	// die;
+            $data['min_date']=$start_date;
+            $data['max_date']=$end_date;   
+	        $reacResult=array();
+	        $temp_status=0;
+	        $particpants=$this->db->select('SUM(event_details.moving_time) as time_taken ,SUM(event_details.distance) as user_distance, team_details.team_name, user_details.user_id as api_id ,team_details.team_id, race_registeration.reg_id, 
+        		        race_registeration.user_id, race_registeration.created_at as reg_on,race_registeration.event_id, 
+        		        user_details.id_table, user_details.d_o_b,user_details.user_email,user_details.firstname,user_details.middle_name ,
+        		        user_details.lastname, user_details.sex,event_category.category_name, user_details.contact_no')
+        		        ->join('user_details','user_details.id_table=race_registeration.user_id')
+        		        ->join('team_details', 'team_details.team_id = race_registeration.team_id', 'left')
+        		        ->join('userevents','userevents.event_id=race_registeration.event_id')
+        		        ->join('event_category','event_category.category_id=userevents.event_category')
+        		        // ->order_by('race_registeration.reg_id','desc')
+        		        ->join('event_details','event_details.user_email=user_details.user_email')
+        		        ->order_by('user_distance','desc')
+        		        ->group_by('user_details.user_id')
+        		        ->where($condition)
+        		        ->get('race_registeration')->result();
+        	// echo '<table border="1">';
+        	$i=1;
+        	
+        	foreach($particpants as $user){
+
+        		// echo '<tr>';
+        		// echo '<td>'.$i.'</td>';
+        		// echo '<td>'.$user->firstname.' '.$user->middle_name.' '.$user->lastname.'</td>';
+        		
+        		// echo '<td>'.($user->user_distance/1000).'km</td>';
+        		// echo '<td>'.$user->api_id.'</td>';
+        		// echo '</tr>';
+        		
+
+        		array_push($reacResult, array(
+        										'name'=>$user->firstname.' '.$user->middle_name.' '.$user->lastname,
+        										'team_name'=>$user->team_name,
+        										'token'=>'REG-000'.$user->reg_id,
+        										'gender'=>$user->sex,
+        										'day'=>date('d-m-Y'),
+        										'distance'=>($user->user_distance/1000),
+        										'timeTaken'=>$user->time_taken,
+        										'd_o_b'=>$user->d_o_b,
+        										'rank'=>$i,
+        									));
+
+        		$i++;
+
+
+        	}
+
+        	// echo '</table>';
+        	// die;
+        	$data['event_name']=$eventDetails->event_name;
+        	$data['eventResult']=$reacResult;
+        	$data['userSessionData']=unserialize($this->session->userdata('userData'));
+		    $data['events']=$this->db->get('userevents')->result();
+			$this->load->view('layout/headerUser',$data);
+			$this->load->view('pages/leader_user_board_latest');
+			$this->load->view('layout/footer');
+		}
 	public function cummTeamLeaderBoardByDate($date){
 		$query="SELECT sum(`event_details`.`distance`) as dist,`race_registeration`.`reg_id`,`event_details`.*,`team_details`.* FROM `user_details` JOIN `event_details` on `user_details`.`user_id`=`event_details`.`athlete_id` JOIN `race_registeration` ON `user_details`.`id_table`=`race_registeration`.`user_id` JOIN `team_details` ON `race_registeration`.`team_id`=`team_details`.`team_id` WHERE `event_details`.`start_date`='$date' AND `race_registeration`.`amoun_status`='Paid' GROUP BY `race_registeration`.`team_id` ORDER BY dist DESC";
 		    
@@ -484,6 +618,7 @@
 		  
 		    $data['userSessionData']=unserialize($this->session->userdata('userData'));
 		    $user_id=$data['userSessionData'][0]->id_table;
+		    $user_email=$data['userSessionData'][0]->user_email;
 		    $atlete_id=$data['userSessionData'][0]->user_id;
 		    $condition=array(
 		                      //  "userevents.event_start_date >"=>date('Y-m-d'),
@@ -503,8 +638,8 @@
 					$con = array(
 						'start_date >='=>$start_date,
 						'start_date <='=>$end_date,
-						'athlete_id'=>$atlete_id,
-						// 'user_email'=>
+						// 'athlete_id'=>$atlete_id,
+						'user_email'=>$user_email
 					);	
 					$arr = $this->db->where($con)->get('event_details')->result();
 					$distance_total =0;
@@ -525,6 +660,7 @@
 		public function myEventActivities($id){
 			$data['userSessionData']=unserialize($this->session->userdata('userData'));
 		    $user_id=$data['userSessionData'][0]->id_table;
+		    $user_email=$data['userSessionData'][0]->user_email;
 			$atlete_id=$data['userSessionData'][0]->user_id;
 			$condition=array(
 						"event_id"=>$id,
@@ -537,8 +673,8 @@
 					$con = array(
 						'start_date >='=>$start_date,
 						'start_date <='=>$end_date,
-						'athlete_id'=>$atlete_id,
-						// 'user_email'=>
+						// 'athlete_id'=>$atlete_id,
+						'user_email'=>$user_email
 					);	
 			$data['activities'] = $this->db->where($con)->get('event_details')->result();
 					
@@ -606,7 +742,8 @@
 			$data['userSessionData']=unserialize($this->session->userdata('userData'));
 			$condition=array(
 								
-								"userevents.event_start_date > "=>date('Y-m-d')
+								"userevents.event_start_date  <"=>date('Y-m-d'),
+								"userevents.event_end_date > "=>date('Y-m-d')
 							);
 			// $data['events']=$this->db->where($condition)->get('userevents')->result();
 			$data['events']=$this->db->select('userevents.*,user_details.firstname, user_details.lastname ')->join('user_details','user_details.id_table=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();
@@ -631,7 +768,7 @@
 				    $access_token=$userData->access_token;
     				$refresh_token=$userData->refresh_token;
     
-    				$this->getAthleteEvents($user_id,$access_token,$refresh_token);
+    				// $this->getAthleteEvents($user_id,$access_token,$refresh_token);
 				}else{
 				    $this->session->set_flashdata('error_msg','Please Connect To Strava First.');
 				}
@@ -642,8 +779,8 @@
 			}
 			
 			$condition=array(
-                               // "user_email"=>$email,
-                                "athlete_id"=>$athlete_id,
+                               "user_email"=>$email,
+                                // "athlete_id"=>$athlete_id,
                                 );
 			$data['events']=$this->db->where($condition)->order_by('id','desc')->get('event_details')->result();
 			// $data['events']=$this->db->select('userevents.*,users_.user_fullname ')->join('users_','users_.user_id=userevents.user_id')->where($condition)->order_by('userevents.event_start_date','asc')->get('userevents')->result();

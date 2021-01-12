@@ -112,7 +112,7 @@
           </li>
           
           <li>
-              <a href="<?=base_url('User/testLe')?>" class="font-weight-bold">
+              <a href="<?=base_url('User/selectEvent')?>" class="font-weight-bold">
               <i class="nc-icon nc-single-02"></i>
               <p style="color: maroon;">Leaderboard</p>
             </a>

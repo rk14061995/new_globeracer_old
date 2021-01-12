@@ -667,29 +667,33 @@ class API extends CI_Controller {
 			$athleteData=$data_->athlete;
 			$userData=array(
 								"token_type"=>$data_->token_type,
-								"connection_type"=>1,
+								"connection_type"=>2,
 								"user_id"=>$athleteData->id,
 								"expires_at"=>$data_->expires_at,
 								"expires_in"=>$data_->expires_in,
 								"refresh_token"=>$data_->refresh_token,
 								"access_token"=>$data_->access_token,
-								// "username"=>$athleteData->username,
 								"resource_state"=>$athleteData->resource_state,
-								// "firstname"=>$athleteData->firstname,
-								// "lastname"=>$athleteData->lastname,
-								// "city"=>$athleteData->city,
-								// "state"=>$athleteData->state,
-								// "country"=>$athleteData->country,
-								// "sex"=>$athleteData->sex,
-								// "premium"=>$athleteData->premium,
-								// "summit"=>$athleteData->summit,
-								// "created_at"=>$athleteData->created_at,
-								// "profile_medium"=>$athleteData->profile_medium,
-								// "profile"=>$athleteData->profile,
-								// "friend"=>$athleteData->friend,
-								// "follower"=>$athleteData->follower,
 							);
+            
+            $tokenDetails=array(
+                                    "user_id"=>$athleteData->id,
+                                    "user_email"=>$email,
+                                    "token_type"=>$data_->token_type,
+                                    "expires_at"=>$data_->expires_at,
+                                    "expires_in"=>$data_->expires_in,
+                                    "refresh_token"=>$data_->refresh_token,
+                                    "access_token"=>$data_->access_token,
+                                    "data_updated_at"=>date('Y-m-d h:i:s A'),
+                                );
+
 			if($this->db->where('user_email',$email)->update('user_details',$userData)){
+                $alr=$this->db->where('user_email',$email)->get('token_details')->result();
+                if(count($alr)==0){
+                    $this->db->insert('token_details',$tokenDetails);
+                }else{
+                    $this->db->where('user_email',$email)->update('token_details',$tokenDetails);
+                }
 				return 1;
 			}else{
 				return 0;
@@ -712,16 +716,9 @@ class API extends CI_Controller {
 								"user_id"=>$athleteData->id,
 								"username"=>$athleteData->username,
 								"resource_state"=>$athleteData->resource_state,
-								// "firstname"=>$athleteData->firstname,
-								// "lastname"=>$athleteData->lastname,
 								
-								// "city"=>$athleteData->city,
-								// "state"=>$athleteData->state,
-								// "country"=>$athleteData->country,
-								// "sex"=>$athleteData->sex,
 								"premium"=>$athleteData->premium,
-								// "summit"=>$athleteData->summit,
-								// "created_at"=>$athleteData->created_at,
+								
 								"profile_medium"=>$athleteData->profile_medium,
 								"profile"=>$athleteData->profile,
 								"friend"=>$athleteData->friend,
@@ -786,7 +783,7 @@ class API extends CI_Controller {
 	        curl_close($ch);
 	       // print_r
 	        
-			$toUpdate=array("refresh_token"=>null,"access_token"=>null);
+			$toUpdate=array("connection_type"=>1,"refresh_token"=>null,"access_token"=>null);
 			if($this->db->where('id_table',$user_id)->update('user_details',$toUpdate)){
 				$this->session->set_flashdata('msg','Disconnected.');
 			}else{

@@ -9,6 +9,255 @@
 		// {
 		// 	# code...
 		// }
+<<<<<<< HEAD
+=======
+		public function viewLeaderboard(){
+			$event_id=$this->input->get('event_id');
+			$data['event_id']=$event_id;
+			$eventDetails=$this->db->where('event_id',$event_id)->get('userevents')->row();
+			$start_date=$eventDetails->event_start_date;
+            $end_date=$eventDetails->event_end_date;	
+			if($this->input->get('_for_')){
+				// echo 'For passed';
+				$for_date=$this->input->get('_for_');
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                "event_details.start_date ="=>$for_date,
+                            );
+			}else{
+                $for_date=$end_date;
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                "event_details.start_date >="=>$start_date,
+                                "event_details.start_date <="=>$end_date,
+                                "race_registeration.amoun_status"=>'Paid'
+                            );
+            }
+            $teamArray=array();
+            if($this->input->get('type') && $this->input->get('type')=='team'){
+                
+                $team_data=array();
+                $condition=array(
+                                "race_registeration.event_id"=>$event_id,
+                                "race_registeration.to_show"=>1,
+                                // "event_details.start_date >="=>$start_date,
+                                // "event_details.start_date <="=>$end_date,
+                                "race_registeration.amoun_status"=>'Paid',
+                                "team_details.team_name!="=>"Solo"
+                            );
+                $all_teams=$this->db
+                                ->select('SUM(event_details.distance) as team_distance, team_details.team_id, team_details.team_name')
+                                ->join('race_registeration', 'team_details.team_id = race_registeration.team_id', 'left')
+                                ->join('user_details','user_details.id_table=race_registeration.user_id')
+                                ->order_by('team_distance','desc')
+                                ->join('event_details','event_details.user_email=user_details.user_email')
+                                ->group_by('team_details.team_id')
+                                ->where($condition)
+                                ->get('team_details')->result();
+                                $i=1;
+                foreach($all_teams as $tm){
+                    array_push($teamArray,array("rank"=>$i,"team_id"=>$tm->team_id,"team_distance"=>$tm->team_distance,"team_name"=>$tm->team_name));
+                    $i++;
+                    array_push($team_data,$tm->team_id);
+                }
+                // print_r($teamArray);
+                // echo '  --------------------------------------------------------------- ';
+                // print_r($team_data);
+                $teams=$this->db->where('team_name!=','Solo')->get('team_details')->result();
+                foreach($teams as $t_m_){
+                    if (in_array($t_m_->team_id, $team_data)){
+                      // echo "Match found";
+                    }else{
+                      // echo "Match not found";
+                      array_push($teamArray,array("rank"=>0,"team_id"=>$t_m_->team_id,"team_distance"=>0,"team_name"=>$t_m_->team_name));
+                    }
+                }
+            }
+            // die;
+            $data['team_data']=$teamArray;
+            // print_r($teamArray);
+            // echo '**********************************************************************';
+            // print_r($all_teams);
+			$data['for_']=$for_date;
+        	// die;
+            $data['min_date']=$start_date;
+            $data['max_date']=$end_date;   
+	        $reacResult=array();
+	        $temp_status=0;
+	        $particpants=$this->db->select('SUM(event_details.moving_time) as time_taken ,SUM(event_details.distance) as user_distance, team_details.team_name, user_details.user_id as api_id ,team_details.team_id, race_registeration.reg_id, 
+        		        race_registeration.user_id, race_registeration.created_at as reg_on,race_registeration.event_id, 
+        		        user_details.id_table, user_details.d_o_b,user_details.user_email,user_details.firstname,user_details.middle_name ,
+        		        user_details.lastname, user_details.sex,event_category.category_name, user_details.contact_no')
+        		        ->join('user_details','user_details.id_table=race_registeration.user_id')
+        		        ->join('team_details', 'team_details.team_id = race_registeration.team_id', 'left')
+        		        ->join('userevents','userevents.event_id=race_registeration.event_id')
+        		        ->join('event_category','event_category.category_id=userevents.event_category')
+        		        // ->order_by('race_registeration.reg_id','desc')
+        		        ->join('event_details','event_details.athlete_id=user_details.user_id')
+        		        ->order_by('user_distance','desc')
+        		        ->group_by('user_details.user_id')
+        		        ->where($condition)
+        		        ->get('race_registeration')->result();
+        	// echo '<table border="1">';
+        	$i=1;
+        	
+        	foreach($particpants as $user){
+
+        		// echo '<tr>';
+        		// echo '<td>'.$i.'</td>';
+        		// echo '<td>'.$user->firstname.' '.$user->middle_name.' '.$user->lastname.'</td>';
+        		
+        		// echo '<td>'.($user->user_distance/1000).'km</td>';
+        		// echo '<td>'.$user->api_id.'</td>';
+        		// echo '</tr>';
+        		
+
+        		array_push($reacResult, array(
+        										'name'=>$user->firstname.' '.$user->middle_name.' '.$user->lastname,
+        										'team_name'=>$user->team_name,
+        										'token'=>'REG-000'.$user->reg_id,
+        										'gender'=>$user->sex,
+        										'day'=>date('d-m-Y'),
+        										'distance'=>($user->user_distance/1000),
+        										'timeTaken'=>$user->time_taken,
+        										'd_o_b'=>$user->d_o_b,
+        										'rank'=>$i,
+        									));
+
+        		$i++;
+
+
+        	}
+
+        	// echo '</table>';
+        	// die;
+        	$data['event_name']=$eventDetails->event_name;
+        	$data['eventResult']=$reacResult;
+        	$data['userSessionData']=unserialize($this->session->userdata('adminData'));
+		    $data['events']=$this->db->get('userevents')->result();
+			$this->load->view('layout/header',$data);
+			$this->load->view('pages/leader_board_latest');
+			$this->load->view('layout/footer');
+		}
+
+
+
+		public function dailyReports($event_id=""){
+			if($this->input->get('event_id')){
+		      $event_id=$this->input->get('event_id');
+		  }
+		    if($event_id!=""){
+		        $condition=array(
+                		            "race_registeration.event_id"=>$event_id,
+                		            "race_registeration.to_show"=>1,
+                		            "race_registeration.amoun_status"=>'Paid'
+		                        );
+		        
+		        $reacResult=array();
+		        $temp_status=0;
+		        $evtDtls=$this->db->where('event_id',$event_id)->get('userevents')->row();
+		        $data['event_name']=$evtDtls->event_name;
+		        if($evtDtls->result_declared!=1){
+		            $data['particpants']=$this->db->select('team_details.team_name, user_details.user_id as api_id ,team_details.team_id, race_registeration.reg_id, 
+        		        race_registeration.user_id, race_registeration.created_at as reg_on,race_registeration.event_id, 
+        		        user_details.id_table, user_details.d_o_b,user_details.user_email,user_details.firstname,user_details.middle_name ,
+        		        user_details.lastname, user_details.sex,event_category.category_name, user_details.contact_no')
+        		        ->join('user_details','user_details.id_table=race_registeration.user_id')
+        		        ->join('team_details', 'team_details.team_id = race_registeration.team_id', 'left')
+        		        ->join('userevents','userevents.event_id=race_registeration.event_id')
+        		        ->join('event_category','event_category.category_id=userevents.event_category')
+        		        ->order_by('race_registeration.reg_id','desc')
+        		        ->where($condition)
+        		        ->get('race_registeration')->result();
+		            foreach($data['particpants'] as $prcpt){
+    		            $soloDistance=$this->getTotalKmCovered($event_id,$prcpt->api_id);
+    		            $teamDistance=$this->getTotalKmCoveredForTeam($prcpt->team_id,$event_id);
+    		            $totalActitvities=$this->getTotalActivities($event_id,$prcpt->api_id);
+    		            $totalEventsKm=$this->totalEventKm($event_id);
+    		            $totalTimeTaken=$this->getTotalTimeTaken($event_id,$prcpt->api_id);
+    		            $temp_status=1;
+    		            $toPush=array(
+    		                            "full_name"=>$prcpt->firstname.' '.$prcpt->middle_name.' '.$prcpt->lastname,
+    		                            "event_id"=>$event_id,
+    		                            "user_id"=>$prcpt->id_table,
+    		                            "gender"=>$prcpt->sex,
+    		                            "d_o_b"=>$prcpt->d_o_b,
+    		                            "token"=>$prcpt->reg_id,
+    		                            "distance"=>$soloDistance,
+    		                            "team_name"=>$prcpt->team_name,
+    		                            "timeTaken"=>$totalTimeTaken,
+    		                            "team_distance"=>$teamDistance,
+    		                            "total_activities"=>$totalActitvities,
+    		                            "totalEventsKm"=>$totalEventsKm
+    		                           );
+        		          if($this->db->insert('generated_result',$toPush)){
+        		              $temp_status=0;
+        		          }else{
+        		              die(" Failed To Insert Result. ");
+        		          }           
+    		          //  array_push($reacResult,$toPush );
+    		        }
+    		        if($temp_status==0){
+    		           $this->db->where('event_id',$event_id)->update('userevents', array("result_declared"=>1)) ;
+    		        }else{
+    		           die(" Something Went Wrong.");
+    		        }
+		        }else{
+		          //  echo ' res';
+		          $condition="";
+		          if($this->input->get('category')){
+        		      $category=$this->input->get('category');
+        		      if($category!=0){
+        		         
+        		             
+        		            $current_year=date('Y');
+                		    $age_18 = date('Y-m-d',strtotime('-18 year'));
+                		    $age_45 = date('Y-m-d',strtotime('-45 year'));
+                		    $age_60 = date('Y-m-d',strtotime('-60 year'));
+                		    switch($category){
+                    		     case 1 : $this->db->where(" `d_o_b` BETWEEN '".$age_45."' AND '".$age_18."'"); $ct_wise='18-45'; break;
+                    		     case 2 : $this->db->where(" `d_o_b` BETWEEN '".$age_60."' AND '".$age_45."'"); $ct_wise='45-60'; break;
+                    		     case 3 : $this->db->where(" `d_o_b` < '".$age_60."' AND `d_o_b`!='0000-00-00'"); $ct_wise='60+'; break;
+                    		     default:  break;
+                    		 }
+                    		 $data['Cateogory_wise']= $ct_wise;
+                    	 
+        		          //echo ' Category: '.$category;
+    		              //$this->db->where('',);
+    		          }else{
+    		              echo ' Category: Zero ';
+    		          }
+        		  }
+        		  if($this->input->get('gender')){
+        		      $gender=$this->input->get('gender');
+        		      if($gender!='all'){
+        		          //echo ' Gender: '.$gender;
+    		              $this->db->where('gender',$gender);
+    		          }else{
+    		              //echo ' Gender: All ';
+    		          }
+        		  }
+		          
+		          
+		            $reacResult=$this->db->where('event_id',$event_id)->order_by('distance','desc')->get('generated_result')->result_array();
+		        }
+		        
+		      //  print_r($reacResult);
+		    }else{
+		        $reacResult=array();
+		    }
+		    $data['eventResult']=$reacResult;
+		  //  print_r($reacResult);
+		  //  die;
+		    $data['userSessionData']=unserialize($this->session->userdata('adminData'));
+		    $data['events']=$this->db->get('userevents')->result();
+			$this->load->view('layout/header',$data);
+			$this->load->view('pages/leader_boa_rd');
+			$this->load->view('layout/footer');
+		}
+>>>>>>> 0f92dcc481100c32c2d4b327d1a64c393cb5b443
 		public function index($event_id=""){
 		    $data['Cateogory_wise']='--NA--';
 		  //  extract($_GET);
