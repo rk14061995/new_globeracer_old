@@ -9,8 +9,7 @@
 		// {
 		// 	# code...
 		// }
-<<<<<<< HEAD
-=======
+
 		public function viewLeaderboard(){
 			$event_id=$this->input->get('event_id');
 			$data['event_id']=$event_id;
@@ -257,7 +256,7 @@
 			$this->load->view('pages/leader_boa_rd');
 			$this->load->view('layout/footer');
 		}
->>>>>>> 0f92dcc481100c32c2d4b327d1a64c393cb5b443
+
 		public function index($event_id=""){
 		    $data['Cateogory_wise']='--NA--';
 		  //  extract($_GET);

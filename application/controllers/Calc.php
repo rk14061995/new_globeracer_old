@@ -468,6 +468,7 @@ class Calc extends CI_Controller {
     //Get Sunnto Expiry Time
     public function checkSunntoExpiryTime($id_table){
         $user=$this->db->where('id_table',$id_table)->get('user_details')->row();
+        die();
         if($user->connection_type!="Not Connected"){
             echo '<td>Check For Expiry Token</td>';
             $condition=" `user_id` = '".$user->user_id."' AND `user_email` = '".$user->user_email."'";
