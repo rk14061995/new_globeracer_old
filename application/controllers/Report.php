@@ -50,7 +50,7 @@
                                 ->join('race_registeration', 'team_details.team_id = race_registeration.team_id', 'left')
                                 ->join('user_details','user_details.id_table=race_registeration.user_id')
                                 ->order_by('team_distance','desc')
-                                ->join('event_details','event_details.athlete_id=user_details.user_id')
+                                ->join('event_details','event_details.user_email=user_details.user_email')
                                 ->group_by('team_details.team_id')
                                 ->where($condition)
                                 ->get('team_details')->result();

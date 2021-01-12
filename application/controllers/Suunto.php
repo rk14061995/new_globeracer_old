@@ -37,7 +37,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				$data = json_decode($return);
 				$array = json_decode(json_encode($data), true);
 				$user_id = $array['user'];
-				$connection_type = 2;
+				$connection_type = 3;
 				$token_type = $array['token_type'];
 				$refresh_token = $array['refresh_token'];
 				$access_token = $array['access_token'];
@@ -77,33 +77,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						'refresh_token'=>$refresh_token,
 						'access_token'=>$access_token,
 						'data_updated_at'=>$data_updated_at,
-						'data_inserted_at'=>$data_inserted_at
+						
     			   	);
     			   	$table = "token_details";
-    			   	$check = $this->USERM->check_token($user_id);
-    			   	if($check)
-    			   	{
-	    			   	$insert = $this->USERM->insert_function($table,$token_data);
-	    			   	if ($insert) {
-	    			   		redirect('User');
-	    			   	}
-	    			   	else{
-	    			   		redirect('User');
-	    			   	}
+    			   	if(count($this->db->where('user_email',$user_email)->get('token_details')->result())==0){
+    			   		if($this->db->insert('token_details',$token_data )){
+    			   			$this->session->set_flashdata('msg','Sunnto Connected Successfuly.');
+    			   		}else{
+    			   			$this->session->set_flashdata('msg','Failed To Add Token Details');
+    			   		}
+    			   	}else{
+    			   		if($this->db->where('user_email',$user_email)->update('token_details',$token_data )){
+    			   			$this->session->set_flashdata('msg','Sunnto Connected Successfuly, New Access Token Updated');
+    			   		}else{
+    			   			$this->session->set_flashdata('msg','Failed To Update Token Details');
+    			   		}
     			   	}
-    			   	else
-    			   	{
-    			   		$condition = array('user_id'=>$user_id);
-						$table="token_details";
-						$update = $this->USERM->update_table($table,$token_data,$condition);	
-						if ($update) {
-	    			   		redirect('User');
-	    			   	}
-	    			   	else{
-	    			   		redirect('User');
-	    			   	}
-    			   	}
-				redirect('User');
+    			   	redirect('User');
+    			   	// $check = $this->USERM->check_token($user_id);
+    		// 	   	if($check)
+    		// 	   	{
+	    	// 		   	$insert = $this->USERM->insert_function($table,$token_data);
+	    	// 		   	if ($insert) {
+	    	// 		   		redirect('User');
+	    	// 		   	}
+	    	// 		   	else{
+	    	// 		   		redirect('User');
+	    	// 		   	}
+    		// 	   	}
+    		// 	   	else
+    		// 	   	{
+    		// 	   		$condition = array('user_id'=>$user_id);
+						// $table="token_details";
+						// $update = $this->USERM->update_table($table,$token_data,$condition);	
+						// if ($update) {
+	    	// 		   		redirect('User');
+	    	// 		   	}
+	    	// 		   	else{
+	    	// 		   		redirect('User');
+	    	// 		   	}
+    		// 	   	}
+				// redirect('User');
 				// $table="suunto_token";
 				// $check = $this->USERM->check_user($user);
 				// if ($check) {

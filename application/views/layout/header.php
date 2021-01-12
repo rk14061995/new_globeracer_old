@@ -196,7 +196,7 @@
            
                 
               </div>
-            <p style="font-size:10px"><a href="https://globeracers.com/Globeracers/Calc/getUserStravaDetails">View Status Of Data Sync.</a></p>
+            <p style="font-size:10px"><a href="<?=base_url('Calc/getUserStravaDetails')?>">View Status Of Data Sync.</a></p>
              <ul class="navbar-nav">
 <!--               <li class="nav-item">
                 <a class="nav-link btn-magnify" href="javascript:;">
