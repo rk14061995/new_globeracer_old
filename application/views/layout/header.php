@@ -86,6 +86,12 @@
                   <p>Category</p>
                 </a>
               </li>
+              <li class="active ">
+                <a href="<?=base_url('Events/subCategory')?>">
+                  <i class="nc-icon nc-ruler-pencil"></i>
+                  <p>Sub-Category</p>
+                </a>
+              </li>
               <!--<li class="active ">-->
               <!--  <a href="<?=base_url('Events')?>">-->
               <!--    <i class="nc-icon nc-ruler-pencil"></i>-->
@@ -136,7 +142,18 @@
                   <p>Report</p>
                 </a>
               </li>
-         
+              <li class="active ">
+                <a href="<?=base_url('Report/generalReport')?>">
+                  <i class="nc-icon nc-single-copy-04"></i>
+                  <p>General Report</p>
+                </a>
+              </li>
+              <li class="active ">
+                <a href="<?=base_url('Report/participantMultipleRace')?>">
+                  <i class="nc-icon nc-single-copy-04"></i>
+                  <p>Participants Report</p>
+                </a>
+              </li>
             </ul>
       </div>
     </div>

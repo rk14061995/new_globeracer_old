@@ -43,6 +43,17 @@
 			$this->load->view('pages/category');
 			$this->load->view('layout/footer');
 		}
+
+		public function subCategory(){
+			$data['categories']=$this->db->get('event_category')->result();
+// 			$data['Ngo']=$this->db->where('user_type','Ngo')->get('users_')->result();
+		$data['userSessionData']=unserialize($this->session->userdata('adminData'));
+// 			$data['Coaches_Nutritionist']=$this->db->where('user_type','Coaches_Nutritionist')->get('users_')->result();
+		$this->load->view('layout/header',$data);
+		$this->load->view('pages/subCategory');
+		$this->load->view('layout/footer');
+	}
+
 		public function updateCategory(){
 		    
             $toUpdate=array('category_name'=>$this->input->post('cat_name'));

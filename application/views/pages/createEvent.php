@@ -160,35 +160,40 @@
                         <input type="date" class="form-control" name="end_date_local" >
                       </div>
                     </div>
-                    <div class="col-md-3 pr-1">
+                    <div class="col-md-6 pr-1">
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label>Event Fee</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <select class="form-control" name="currency">
-                                        <option value="INR">₹</option>
-                                        <option value="USD">$</option>
-                                    </select>
-                                </div>
-                                 <div class="col-md-8">
-                                    
+                                <div class="col-md-6">
+                                    <label>Event Fee (INR)</label>
                                     <input type="number" class="form-control" placeholder=" 0" value="0" name="fee">
                                 </div>
+                                <div class="col-md-6">
+                                    <label>Event Fee (USD)</label>
+                                    <input type="number" class="form-control" placeholder=" 0" value="0" name="fee_usd">
+                                </div>
                             </div>
+                            <!--<div class="row">-->
+                            <!--    <div class="col-md-4">-->
+                            <!--        <select class="form-control" name="currency">-->
+                            <!--            <option value="INR">₹</option>-->
+                            <!--            <option value="USD">$</option>-->
+                            <!--        </select>-->
+                            <!--    </div>-->
+                            <!--     <div class="col-md-8">-->
+                                    
+                                    
+                            <!--    </div>-->
+                            <!--</div>-->
                           
                             
                           </div>
                     </div>
-                    <div class="col-md-3 pr-1">
-                      <div class="form-group">
-                        <label>Distance(m)</label>
-                        <input type="number" class="form-control" placeholder="0" value="" name="event_distance">
-                      </div>
-                    </div>
+                    <!--<div class="col-md-3 pr-1">-->
+                    <!--  <div class="form-group">-->
+                    <!--    <label>Distance(m)</label>-->
+                    <!--    <input type="number" class="form-control" placeholder="0" value="" name="event_distance">-->
+                    <!--  </div>-->
+                    <!--</div>-->
                    
                   </div>
                   <div class="row">
