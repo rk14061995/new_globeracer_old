@@ -154,6 +154,12 @@
                   <p>Participants Report</p>
                 </a>
               </li>
+              <li class="active ">
+                <a href="<?=base_url('Report/filterTotalKm')?>">
+                  <i class="nc-icon nc-single-copy-04"></i>
+                  <p>Total Km Report</p>
+                </a>
+              </li>
             </ul>
       </div>
     </div>

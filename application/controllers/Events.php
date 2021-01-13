@@ -77,8 +77,6 @@
             }else{
                 die(json_encode(array("code"=>0)));
             }
-            
-
 		}
 		public function dltCategory(){
 		    
@@ -88,9 +86,7 @@
             }else{
                 die(json_encode(array("code"=>0)));
             }
-            
-            
-
+        
 		}
 		public function upComing(){
 			$data['userSessionData']=unserialize($this->session->userdata('adminData'));

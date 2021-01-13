@@ -838,7 +838,7 @@
 					for($i=0 ; $i < count($arr); $i++){
 						$distance_total = $distance_total +$arr[$i]->distance;
 					}
-					print_r($arr);
+				//	print_r($arr);
 				//	die();
 					array_push($result,array('event'=>$rest,'distanceSum'=>$distance_total));
 				}	
@@ -849,17 +849,66 @@
 			$this->load->view('layout/footerUser');
 		}
 
+	public function filterTotalKm(){
+		// echo $region = $this->input->get('region');
+		// die();
+		$condition= array(
+			'race_registeration.to_show'=>1,
+			'race_registeration.amoun_status'=>'Paid' 
+		); 
 
-        public function priceCmp($a, $b){
+		if($region = $this->input->get('region')){
+			$condition = array_merge($condition,array("user_details.continent_name"=>$region));
+		}
+		if($gender = $this->input->get('gender')){
+			$condition = array_merge($condition,array("user_details.sex"=>$gender));
+		}
+		if($evnt = $this->input->get('event')){
+			$condition = array_merge($condition,array("race_registeration.event"=>$evnt));
+		}
+		$data['userSessionData']=unserialize($this->session->userdata('adminData'));
+		$data['events'] =$this->db->get('userevents')->result();
+		$data['continents'] =$this->db->get('continents')->result();
+		
+		// 
+		$this->db->select('user_details.sex, user_details.user_id as athlete_id, userevents.event_name , count(race_registeration.reg_id) as participants, user_details.firstname,user_details.sex, user_details.user_id as u_id ');
+		$this->db->where($condition);
+		$this->db->join('userevents','userevents.event_id = race_registeration.event_id');
+		$this->db->join('user_details','user_details.id_table = race_registeration.user_id');
+		$res = $this->db->group_by('race_registeration.reg_id')->get('race_registeration')->result_array();
+	//	print_r($res);
+		$eventArray =array();
+		foreach($res as $result){
+			if($result['athlete_id']){
+				
+			$this->db->select('SUM(distance) as sumDistance');
+			$this->db->where('athlete_id', $result['athlete_id']);
+			$this->db->where('start_date >=', '2020-11-14'); //always use data after 2020-11-14
+			$suma = $this->db->get('event_details')->row();
+//print_r($suma);
+			$event=	array_merge($result,array("totalSum"=>$suma));
+				array_push($eventArray, $event);
+			}
+
+		}
+		$data['eventResult']=$eventArray;
+
+
+		$this->load->view('layout/header',$data);
+		$this->load->view('pages/filterTotalKm');
+		$this->load->view('layout/footer');
+	}	
+
+    //     public function priceCmp($a, $b){
            
-           if  ( $a[price] == $b[price] )
-                return 0;
-           if  ( $a[price] < $b[price] )
-                 return -1;
-           return 1;
+    //        if  ( $a[price] == $b[price] )
+    //             return 0;
+    //        if  ( $a[price] < $b[price] )
+    //              return -1;
+    //        return 1;
       
         
-       }
+    //    }
 	}
 	
 
