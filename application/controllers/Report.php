@@ -864,7 +864,7 @@
 			$condition = array_merge($condition,array("user_details.sex"=>$gender));
 		}
 		if($evnt = $this->input->get('event')){
-			$condition = array_merge($condition,array("race_registeration.event"=>$evnt));
+			$condition = array_merge($condition,array("race_registeration.event_id"=>$evnt));
 		}
 		$data['userSessionData']=unserialize($this->session->userdata('adminData'));
 		$data['events'] =$this->db->get('userevents')->result();

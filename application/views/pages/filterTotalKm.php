@@ -180,7 +180,15 @@ $eventGet= '';
             var n = current.includes("gender");
             var m = current.includes("event");
             if(n || m){
+              var o = current.includes("region");
+               if(!o){
                 var url = current+'&region='+event_;
+               }else{
+                var queryParams = new URLSearchParams(window.location.search);
+                queryParams.set("region", event_);
+               var url ='<?=base_url('Report/filterTotalKm')?>?'+queryParams;
+               }
+                
             }else{
               var url = '<?=base_url('Report/filterTotalKm')?>?region='+event_;
             }
@@ -192,13 +200,21 @@ $eventGet= '';
             var current = window.location.href;
             var n = current.includes("region");
             var m = current.includes("event");
+            
             if(n || m){
-                var url = current+'&gender='+event_;
+              var o = current.includes("gender");
+               if(!o){
+                  var url = current+'&gender='+event_;
+               }else{
+                var queryParams = new URLSearchParams(window.location.search);
+                queryParams.set("gender", event_);
+               var url ='<?=base_url('Report/filterTotalKm')?>?'+queryParams;
+               }
             }else{
               var url = '<?=base_url('Report/filterTotalKm')?>?gender='+event_;
             }
-        
-            window.location.href = url;
+       
+           window.location.href = url;
         });
         $(document).on('change','#raceType',function(){
             var event_=$(this).val();
@@ -206,7 +222,15 @@ $eventGet= '';
             var n = current.includes("region");
             var m = current.includes("gender");
             if(n || m){
-                var url = current+'&event='+event_;
+              var o = current.includes("event");
+               if(!o){
+                  var url = current+'&event='+event_;
+               }else{
+                var queryParams = new URLSearchParams(window.location.search);
+                queryParams.set("event", event_);
+               var url ='<?=base_url('Report/filterTotalKm')?>?'+queryParams;
+               }
+             
             }else{
               var url = '<?=base_url('Report/filterTotalKm')?>?event='+event_;
             }
@@ -298,7 +322,8 @@ $eventGet= '';
     $(document).ready(function(){
         var evnt = '<?=$eventGet?>'
         if(evnt!=''){
-          $("#typeSelect").show();
+          $('#typeSelect option[value="single"]').attr("selected","selected");
+          $("#raceSs").show();
             $('#raceType option[value="'+evnt+'"]').attr("selected","selected");
         }
     })
